@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360" role="img" aria-label="Persona remando en paddle surf al atardecer">
+  <defs>
+    <linearGradient id="cieloPaddle" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#fbbf24"/>
+      <stop offset=".45" stop-color="#f97316"/>
+      <stop offset="1" stop-color="#7c3aed"/>
+    </linearGradient>
+    <linearGradient id="agua" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#6d28d9"/>
+      <stop offset="1" stop-color="#312e81"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="640" height="360" fill="url(#cieloPaddle)"/>
+
+  <!-- Sol y reflejo -->
+  <circle cx="300" cy="186" r="58" fill="#fef3c7" opacity=".85"/>
+  <path d="M252 244 L348 244 L332 300 L268 300 Z" fill="#fde68a" opacity=".25"/>
+
+  <!-- Montañas lejanas -->
+  <path d="M0 246 L96 176 L186 246 Z" fill="#4c1d95" opacity=".45"/>
+  <path d="M150 246 L268 168 L396 246 Z" fill="#4c1d95" opacity=".3"/>
+
+  <!-- Mar -->
+  <path d="M0 242 L640 242 L640 360 L0 360 Z" fill="url(#agua)"/>
+  <g stroke="#c4b5fd" stroke-width="3" fill="none" opacity=".45">
+    <path d="M60 286 q26 -10 52 0 q26 10 52 0"/>
+    <path d="M360 300 q26 -10 52 0 q26 10 52 0"/>
+    <path d="M160 334 q26 -10 52 0 q26 10 52 0"/>
+    <path d="M470 340 q26 -10 52 0 q26 10 52 0"/>
+  </g>
+
+  <!-- Tabla -->
+  <ellipse cx="352" cy="266" rx="104" ry="13" fill="#f8fafc"/>
+  <ellipse cx="352" cy="266" rx="104" ry="13" fill="none" stroke="#1e1b4b" stroke-width="2" opacity=".35"/>
+  <path d="M300 266 L404 266" stroke="#f1f5f9" stroke-width="2" opacity=".8"/>
+
+  <!-- Remo -->
+  <path d="M424 148 L318 286" stroke="#f8fafc" stroke-width="5" stroke-linecap="round"/>
+  <path d="M424 148 l16 -14 l10 12 l-16 14 Z" fill="#f8fafc"/>
+
+  <!-- Persona -->
+  <g fill="#1e1b4b">
+    <circle cx="344" cy="196" r="11"/>
+    <path d="M334 209 q10 -6 20 0 l4 34 -8 4 -6 -20 -6 20 -8 -4 Z"/>
+    <path d="M334 218 L418 156" stroke="#1e1b4b" stroke-width="6" stroke-linecap="round"/>
+    <path d="M340 246 L330 268 M356 246 L368 266" stroke="#1e1b4b" stroke-width="6" stroke-linecap="round"/>
+  </g>
+
+  <!-- Espuma -->
+  <g fill="#ede9fe" opacity=".55">
+    <circle cx="256" cy="278" r="7"/>
+    <circle cx="240" cy="286" r="4"/>
+    <circle cx="452" cy="284" r="5"/>
+  </g>
+</svg>

@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>纯前端调用公开 API · 无需后端</title>
+<style>
+  :root{--ink:#1e293b;--muted:#64748b;--line:#e2e8f0;--brand:#2563eb;--ok:#059669;--err:#dc2626}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",Arial,sans-serif;
+    background:#f8fafc;color:var(--ink);line-height:1.7;padding:28px 18px 60px;
+  }
+  .wrap{max-width:960px;margin:0 auto}
+  h1{font-size:22px;margin-bottom:4px}
+  .sub{color:var(--muted);font-size:13.5px;margin-bottom:24px}
+  .sub code{font-family:ui-monospace,Menlo,monospace;background:#eef2ff;color:#4338ca;padding:1px 6px;border-radius:4px;font-size:12px}
+
+  /* 搜索区 */
+  .search{display:flex;gap:8px;margin-bottom:8px}
+  .search input{
+    flex:1;min-width:0;padding:11px 14px;border:1px solid var(--line);border-radius:8px;
+    font-size:15px;font-family:inherit;background:#fff;outline:none;
+  }
+  .search input:focus{border-color:var(--brand);box-shadow:0 0 0 3px rgba(37,99,235,.12)}
+  .search button{
+    padding:11px 20px;border:0;border-radius:8px;background:var(--brand);color:#fff;
+    font-size:15px;font-family:inherit;font-weight:600;cursor:pointer;white-space:nowrap;
+  }
+  .search button:disabled{opacity:.55;cursor:not-allowed}
+  .url{
+    font-family:ui-monospace,Menlo,monospace;font-size:11.5px;color:var(--muted);
+    word-break:break-all;margin-bottom:18px;
+  }
+  .url b{color:var(--brand)}
+
+  /* 状态条 */
+  .status{font-size:13.5px;padding:10px 14px;border-radius:8px;margin-bottom:16px;display:none}
+  .status.loading{display:block;background:#eff6ff;color:#1d4ed8;border:1px solid #bfdbfe}
+  .status.error{display:block;background:#fef2f2;color:var(--err);border:1px solid #fecaca}
+  .status.empty{display:block;background:#fffbeb;color:#b45309;border:1px solid #fde68a}
+  .status.ok{display:block;background:#f0fdf4;color:var(--ok);border:1px solid #bbf7d0}
+  .spinner{
+    display:inline-block;width:12px;height:12px;border:2px solid currentColor;
+    border-right-color:transparent;border-radius:50%;animation:spin .7s linear infinite;
+    vertical-align:-1px;margin-right:7px;
+  }
+  @keyframes spin{to{transform:rotate(360deg)}}
+
+  /* 结果网格 */
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:14px}
+  .card{
+    background:#fff;border:1px solid var(--line);border-radius:10px;overflow:hidden;
+    display:flex;flex-direction:column;
+  }
+  .card img{width:100%;height:150px;object-fit:cover;background:#f1f5f9;display:block}
+  .card .body{padding:10px 12px 12px}
+  .card h3{font-size:14px;line-height:1.45;margin-bottom:4px}
+  .card p{font-size:12.5px;color:var(--muted)}
+  .card .year{
+    display:inline-block;margin-top:6px;font-size:11px;background:#f1f5f9;
+    border-radius:999px;padding:1px 8px;color:#475569;
+  }
+
+  .note{
+    margin-top:28px;padding:14px 16px;background:#fff;border:1px solid var(--line);
+    border-left:4px solid var(--brand);border-radius:8px;font-size:13.5px;color:#334155;
+  }
+  .note b{color:var(--ink)}
+  .note ul{margin:6px 0 0 18px}
+  .note li{margin-bottom:4px}
+
+  @media (max-width:600px){
+    body{padding:18px 14px 50px}
+    h1{font-size:19px}
+    .search{flex-direction:column}
+    .search button{width:100%}
+    .grid{grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
+    .card img{height:120px}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>纯前端调用公开 API（没有自己的后端）</h1>
+  <p class="sub">数据来源：<code>openlibrary.org</code> · 这个页面只用了 HTML + CSS + JavaScript</p>
+
+  <div class="search">
+    <input id="q" type="search" value="quijote" placeholder="输入书名，比如 quijote / cervantes / garcia marquez">
+    <button id="btn">搜索</button>
+  </div>
+
+  <p class="url">实际请求：<b id="currentUrl">—</b></p>
+
+  <div id="status" class="status"></div>
+  <div id="out" class="grid"></div>
+
+  <div class="note">
+    <b>这个页面为什么不需要后端？</b>
+    <ul>
+      <li>对方的服务器返回了 <code>access-control-allow-origin: *</code>，允许任何网页直接调用</li>
+      <li>它不需要 API Key，所以没有密钥可泄露</li>
+      <li>它提供的是「公共数据」，没有你私有的东西要保护</li>
+    </ul>
+  </div>
+</div>
+
+<script>
+  const API = "https://openlibrary.org/search.json";
+  const input = document.querySelector("#q");
+  const btn = document.querySelector("#btn");
+  const statusBox = document.querySelector("#status");
+  const out = document.querySelector("#out");
+  const currentUrl = document.querySelector("#currentUrl");
+
+  // 统一控制状态条：loading / error / empty / ok
+  function setStatus(type, html) {
+    statusBox.className = "status " + type;
+    statusBox.innerHTML = html;
+  }
+
+  function clearStatus() {
+    statusBox.className = "status";
+    statusBox.innerHTML = "";
+  }
+
+  function renderBooks(docs) {
+    out.innerHTML = docs.map(function (book) {
+      const title = book.title || "（无标题）";
+      const author = (book.author_name && book.author_name[0]) || "作者未知";
+      const year = book.first_publish_year || "";
+      const cover = book.cover_i
+        ? "https://covers.openlibrary.org/b/id/" + book.cover_i + "-M.jpg"
+        : "";
+
+      return `
+        <article class="card">
+          ${cover ? `<img src="${cover}" alt="" loading="lazy">` : ""}
+          <div class="body">
+            <h3>${title}</h3>
+            <p>${author}</p>
+            ${year ? `<span class="year">${year}</span>` : ""}
+          </div>
+        </article>`;
+    }).join("");
+  }
+
+  async function searchBooks() {
+    const word = input.value.trim();
+
+    if (!word) {
+      setStatus("empty", "请输入一个关键词再搜索。");
+      return;
+    }
+
+    // ① 进入加载状态 —— 用户必须知道"正在做事"
+    btn.disabled = true;
+    setStatus("loading", '<span class="spinner"></span>正在向 openlibrary.org 请求数据…');
+    out.innerHTML = "";
+
+    const url = API
+      + "?q=" + encodeURIComponent(word)
+      + "&limit=12"
+      + "&fields=title,author_name,first_publish_year,cover_i";
+
+    currentUrl.textContent = url;
+
+    try {
+      // ② 发请求
+      const res = await fetch(url);
+
+      // ③ 检查 HTTP 状态码
+      if (!res.ok) {
+        throw new Error("服务器返回 HTTP " + res.status);
+      }
+
+      // ④ 把 JSON 文本变成 JS 对象
+      const data = await res.json();
+
+      // ⑤ 处理"没有结果"这种正常情况
+      if (!data.docs || data.docs.length === 0) {
+        setStatus("empty", "没有找到相关书籍，换个关键词试试。");
+        return;
+      }
+
+      // ⑥ 渲染
+      renderBooks(data.docs);
+      setStatus("ok", "找到 " + data.numFound + " 条结果，本页显示 " + data.docs.length + " 条。");
+
+    } catch (error) {
+      // ⑦ 网络错误、CORS 失败、404、500 都会进这里
+      setStatus("error", "请求失败：" + error.message + "（打开 F12 → Console 看详细原因）");
+    } finally {
+      // ⑧ 不管成功还是失败，按钮一定要恢复
+      btn.disabled = false;
+    }
+  }
+
+  btn.addEventListener("click", searchBooks);
+  input.addEventListener("keydown", function (e) {
+    if (e.key === "Enter") searchBooks();
+  });
+
+  // 打开页面就自动搜一次
+  searchBooks();
+</script>
+</body>
+</html>

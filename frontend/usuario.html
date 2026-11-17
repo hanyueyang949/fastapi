@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>letdosport · Usuario</title>
+<link rel="stylesheet" href="css/style.css?v=10">
+</head>
+<body>
+<header class="site-header">
+  <div class="wrap header-inner">
+    <a class="brand" href="index.html"><span class="brand-mark">L</span><span class="brand-text">letdosport</span></a>
+    <nav class="header-nav">
+      <a href="usuario.html" aria-current="page">Usuario</a>
+      <a class="cart-link" href="carrito.html">Carrito <span class="cart-count" data-contador-carrito hidden>0</span></a>
+    </nav>
+  </div>
+</header>
+<main class="wrap">
+  <div class="page-head">
+    <div><h1>Mi cuenta</h1><p class="page-sub">Perfil de demostración, carrito y pedidos guardados en este navegador.</p></div>
+    <a class="btn btn-ghost" href="index.html">← Volver al catálogo</a>
+  </div>
+  <section class="profile-head" aria-label="Perfil">
+    <div class="avatar" aria-hidden="true">DS</div>
+    <div>
+      <h2 class="profile-name">Deportista letdosport</h2>
+      <p class="profile-mail">deportista@letdosport.es</p>
+      <span class="profile-tag">Cuenta de demostración</span>
+    </div>
+  </section>
+  <div class="profile-grid">
+    <section class="profile-card">
+      <h2>Mis datos</h2>
+      <dl class="perfil-datos">
+        <div><dt>Nombre</dt><dd>Deportista letdosport</dd></div>
+        <div><dt>Correo</dt><dd>deportista@letdosport.es</dd></div>
+        <div><dt>Tipo de cuenta</dt><dd>Demostración</dd></div>
+      </dl>
+    </section>
+    <section class="profile-card">
+      <h2>Mi carrito</h2>
+      <p id="perfil-carrito-resumen" class="profile-empty">Tu carrito está vacío.</p>
+      <ul id="perfil-carrito-lista" class="mini-list"></ul>
+      <a class="btn btn-primary profile-link-btn" href="carrito.html">Ver carrito</a>
+    </section>
+    <section class="profile-card is-wide">
+      <h2>Mis pedidos</h2>
+      <p id="perfil-pedidos-vacio" class="profile-empty">Todavía no hay pedidos. Al finalizar una compra de demostración aparecerá aquí.</p>
+      <ul id="perfil-pedidos-lista" class="order-list"></ul>
+    </section>
+  </div>
+</main>
+<script src="js/cart.js"></script>
+<script src="js/ui.js"></script>
+<script src="js/usuario.js"></script>
+</body>
+</html>

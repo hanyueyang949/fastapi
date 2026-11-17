@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>letdosport · Carrito</title>
+<link rel="stylesheet" href="css/style.css?v=10">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="wrap header-inner">
+    <a class="brand" href="index.html">
+      <span class="brand-mark">L</span>
+      <span class="brand-text">letdosport</span>
+    </a>
+
+    <nav class="header-nav">
+      <a href="usuario.html">Usuario</a>
+      <a class="cart-link is-active" href="carrito.html">
+        Carrito
+        <span class="cart-count" data-contador-carrito hidden>0</span>
+      </a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <div class="page-head">
+    <div>
+      <h1>Tu carrito</h1>
+      <p class="page-sub">Revisa lo que has añadido antes de finalizar la compra.</p>
+    </div>
+    <a class="btn btn-ghost" href="index.html">← Seguir comprando</a>
+  </div>
+
+  <!-- Carrito vacío -->
+  <div id="carrito-vacio" class="state state-box" hidden>
+    <p class="state-title">Tu carrito está vacío</p>
+    <p class="state-text">Añade algún deporte desde el catálogo y aparecerá aquí.</p>
+    <a class="btn btn-primary" href="index.html">Ir al catálogo</a>
+  </div>
+
+  <!-- Carrito con artículos -->
+  <div id="carrito-contenido" class="cart-layout" hidden>
+
+    <!-- Lista de líneas: la genera js/carrito.js -->
+    <section id="carrito-lista" class="cart-list" aria-live="polite"></section>
+
+    <!-- Resumen -->
+    <aside class="cart-summary">
+      <h2>Resumen</h2>
+
+      <dl class="cart-totals">
+        <div>
+          <dt>Artículos</dt>
+          <dd id="resumen-articulos">0</dd>
+        </div>
+        <div>
+          <dt>Envío</dt>
+          <dd>Gratis</dd>
+        </div>
+        <div class="cart-total-row">
+          <dt>Total</dt>
+          <dd id="resumen-total">0,00 €</dd>
+        </div>
+      </dl>
+
+      <button class="btn btn-primary cart-buy" id="btn-comprar" type="button">Finalizar compra</button>
+      <button class="btn btn-ghost cart-clear" id="btn-vaciar" type="button">Vaciar carrito</button>
+
+      <p class="cart-note">Compra de demostración: no se pide ningún dato bancario.</p>
+    </aside>
+  </div>
+
+  <!-- Mensaje tras "comprar" -->
+  <div id="pedido-ok" class="state state-box pedido-ok" hidden>
+    <p class="state-title">¡Pedido realizado!</p>
+    <p class="state-text">
+      Hemos vaciado el carrito y guardado el pedido en tu perfil (demostración).
+    </p>
+    <div class="pedido-acciones">
+      <a class="btn btn-primary" href="usuario.html">Ver mi cuenta</a>
+      <a class="btn btn-ghost" href="index.html">Seguir comprando</a>
+    </div>
+  </div>
+
+</main>
+
+<div id="toasts" class="toast-wrap" aria-live="polite" aria-atomic="false"></div>
+
+<script src="js/cart.js"></script>
+<script src="js/ui.js"></script>
+<script src="js/carrito.js"></script>
+
+</body>
+</html>

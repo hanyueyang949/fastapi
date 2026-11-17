@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>架构图解 · 前端 / API / 后端 / 数据库</title>
+<style>
+  :root{
+    --front:#3b82f6;
+    --net:#8b5cf6;
+    --back:#10b981;
+    --db:#f59e0b;
+    --docs:#64748b;
+    --ink:#1e293b;
+    --muted:#64748b;
+    --line:#e2e8f0;
+    --bg:#f8fafc;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Microsoft YaHei","Helvetica Neue",Arial,sans-serif;
+    background:var(--bg);color:var(--ink);line-height:1.85;padding:32px 20px 80px;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:1000px;margin:0 auto}
+  h1{font-size:26px;margin-bottom:6px;letter-spacing:-.01em}
+  .sub{color:var(--muted);font-size:14px;margin-bottom:36px}
+  h2{font-size:19px;margin:48px 0 6px;padding-top:20px;border-top:1px solid var(--line)}
+  h2 .num{color:var(--muted);font-weight:600;margin-right:8px}
+  .lead{color:var(--muted);font-size:14px;margin-bottom:20px}
+
+  /* ---------- 分层 ---------- */
+  .layer{
+    background:#fff;border:1px solid var(--line);border-left:6px solid var(--line);
+    border-radius:10px;padding:16px 18px;box-shadow:0 1px 2px rgba(15,23,42,.04);
+  }
+  .layer h3{font-size:16px;display:flex;align-items:center;gap:10px;margin-bottom:4px;flex-wrap:wrap}
+  .tag{
+    font-size:11px;font-weight:700;letter-spacing:.04em;
+    padding:2px 9px;border-radius:999px;color:#fff;flex:0 0 auto;
+  }
+  .layer .meta{font-size:13.5px;color:#475569}
+  .layer .files{margin-top:10px;display:flex;flex-wrap:wrap;gap:6px}
+  .chip{
+    font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px;
+    background:#f1f5f9;border:1px solid var(--line);border-radius:6px;padding:3px 8px;color:#334155;
+  }
+  .f-front{border-left-color:var(--front)} .f-front .tag{background:var(--front)}
+  .f-net{border-left-color:var(--net)}     .f-net .tag{background:var(--net)}
+  .f-back{border-left-color:var(--back)}   .f-back .tag{background:var(--back)}
+  .f-db{border-left-color:var(--db)}       .f-db .tag{background:var(--db)}
+  .f-docs{border-left-color:var(--docs)}   .f-docs .tag{background:var(--docs)}
+
+  /* ---------- 箭头 ---------- */
+  .arrow{display:flex;align-items:center;gap:12px;padding:10px 0 10px 22px}
+  .arrow .bar{width:2px;height:34px;background:var(--line);position:relative;flex:0 0 2px}
+  .arrow .bar::after{
+    content:"";position:absolute;bottom:-1px;left:-4px;
+    border-left:5px solid transparent;border-right:5px solid transparent;
+    border-top:7px solid var(--line);
+  }
+  .arrow .txt{font-size:13px;color:#475569}
+  .arrow .txt b{font-family:ui-monospace,Menlo,monospace;background:#eef2ff;color:#4338ca;
+    padding:1px 6px;border-radius:4px;font-size:12px;font-weight:600}
+
+  /* ---------- 步骤 ---------- */
+  ol.steps{list-style:none;counter-reset:s}
+  ol.steps li{
+    counter-increment:s;position:relative;padding:0 0 18px 46px;border-left:2px solid var(--line);
+    margin-left:14px;
+  }
+  ol.steps li:last-child{border-left-color:transparent;padding-bottom:0}
+  ol.steps li::before{
+    content:counter(s);position:absolute;left:-15px;top:0;width:28px;height:28px;border-radius:50%;
+    background:#fff;border:2px solid var(--line);color:var(--muted);
+    font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;
+  }
+  ol.steps li.front::before{border-color:var(--front);color:var(--front)}
+  ol.steps li.net::before{border-color:var(--net);color:var(--net)}
+  ol.steps li.back::before{border-color:var(--back);color:var(--back)}
+  ol.steps li.db::before{border-color:var(--db);color:var(--db)}
+  ol.steps .t{font-weight:600;font-size:14px}
+  ol.steps .who{font-size:11px;font-weight:700;letter-spacing:.05em;
+    margin-left:8px;color:var(--muted)}
+  ol.steps > li > code{
+    display:block;margin-top:6px;font-family:ui-monospace,Menlo,monospace;font-size:12.5px;
+    background:#0f172a;color:#e2e8f0;border-radius:8px;padding:10px 12px;overflow-x:auto;white-space:pre;
+    line-height:1.6;
+  }
+  ol.steps .note{font-size:13px;color:var(--muted);margin-top:6px}
+
+  /* ---------- 嵌套 ---------- */
+  .nest{background:#fff;border:1px solid var(--line);border-radius:12px;padding:16px}
+  .nest .n1{border:2px solid var(--back);border-radius:10px;padding:14px;background:#f0fdf4}
+  .nest .n2{border:2px dashed var(--front);border-radius:10px;padding:14px;margin-top:12px;background:#eff6ff}
+  .nest .n3{border:2px dotted var(--db);border-radius:10px;padding:14px;margin-top:12px;background:#fffbeb}
+  .nest h4{font-size:14.5px;margin-bottom:4px}
+  .nest p{font-size:13px;color:#475569}
+
+  /* ---------- 表格 ---------- */
+  table{width:100%;border-collapse:collapse;background:#fff;border-radius:10px;overflow:hidden;
+    border:1px solid var(--line);font-size:13.5px}
+  th,td{padding:10px 12px;text-align:left;border-bottom:1px solid var(--line);vertical-align:top}
+  th{background:#f8fafc;font-size:12px;letter-spacing:.04em;color:var(--muted);font-weight:600}
+  tr:last-child td{border-bottom:none}
+  code{
+    font-family:ui-monospace,Menlo,monospace;font-size:12.5px;background:#f1f5f9;
+    padding:1px 5px;border-radius:4px;color:#334155;
+  }
+  ol.steps > li > code{background:#0f172a;color:#e2e8f0;padding:10px 12px}
+
+  /* ---------- 卡片 ---------- */
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  .callout{background:#fff;border:1px solid var(--line);border-left:4px solid var(--net);
+    border-radius:8px;padding:12px 14px;font-size:13.5px;color:#334155}
+  .callout b{color:var(--ink)}
+
+  @media (max-width:760px){
+    body{padding:20px 14px 60px;line-height:1.8}
+    h1{font-size:21px}
+    .grid{grid-template-columns:1fr}
+    ol.steps li{padding-left:38px}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <h1>前端、API、后端、数据库之间是什么关系？</h1>
+  <p class="sub">架构图解 · 「图书馆管理 API」项目 · FastAPI + SQLite + 原生 JavaScript</p>
+
+  <!-- ============ 01 ============ -->
+  <h2><span class="num">01</span>全景：4 个层，3 次跳跃</h2>
+  <p class="lead">每一层只和相邻的下一层说话，没有人可以跨层。</p>
+
+  <div class="layer f-front">
+    <h3><span class="tag">使用者</span> ① 人 —— 使用这个应用的人</h3>
+    <p class="meta">点击、输入、按「保存」。他根本不知道有 API 这个东西存在。</p>
+  </div>
+
+  <div class="arrow"><div class="bar"></div>
+    <div class="txt">鼠标点击 / 键盘输入 → 触发 JavaScript 事件</div></div>
+
+  <div class="layer f-front">
+    <h3><span class="tag">前端</span> ② 浏览器 —— <code>http://127.0.0.1:5500</code></h3>
+    <p class="meta">负责画界面，并决定向后端要什么数据。永远不碰数据库。</p>
+    <div class="files">
+      <span class="chip">app.html · 结构</span>
+      <span class="chip">style.css · 外观</span>
+      <span class="chip">app.js · 行为</span>
+      <span class="chip">api.js · fetch()</span>
+    </div>
+  </div>
+
+  <div class="arrow"><div class="bar"></div>
+    <div class="txt">HTTP 请求 <b>POST /books/</b> + 请求体 <b>{"title":"..."}</b> · 文本格式的 JSON · 来源端口 :5500</div></div>
+
+  <div class="layer f-net">
+    <h3><span class="tag">边界</span> ③ 网络 —— 浏览器在这里执行 CORS 检查</h3>
+    <p class="meta">浏览器自动加上 <code>Origin</code> 请求头，并要求服务器授权。CORS 报错就发生在这条线上。</p>
+  </div>
+
+  <div class="arrow"><div class="bar"></div>
+    <div class="txt">到达 uvicorn · 文本被转成 Python 的 <b>dict</b></div></div>
+
+  <div class="layer f-back">
+    <h3><span class="tag">后端</span> ④ FastAPI —— <code>http://127.0.0.1:8000</code></h3>
+    <p class="meta">接收、校验、执行业务逻辑、返回 JSON。它是唯一能读写数据库的东西。</p>
+    <div class="files">
+      <span class="chip">main.py · 装配 + CORS</span>
+      <span class="chip">routes/ · API（门面）</span>
+      <span class="chip">schema/ · Pydantic 校验</span>
+      <span class="chip">controller/ · 业务逻辑</span>
+      <span class="chip">models/ · 表结构</span>
+      <span class="chip">database/ · 连接</span>
+    </div>
+  </div>
+
+  <div class="arrow"><div class="bar"></div>
+    <div class="txt">SQL 语句（由 ORM SQLAlchemy 自动生成）</div></div>
+
+  <div class="layer f-db">
+    <h3><span class="tag">数据</span> ⑤ SQLite —— <code>db.sqlite3</code></h3>
+    <p class="meta">一个文件，里面是 <code>books</code> 表。即使服务器关掉，数据也不会丢。</p>
+  </div>
+
+  <div class="grid" style="margin-top:22px">
+    <div class="callout">
+      <b>旁路 · 文档</b><br>
+      <code>/docs</code> 和 <code>/openapi.json</code> 是 FastAPI 读取
+      <code>routes/</code> + <code>schema/</code> 后<b>自动生成</b>的。
+      不是你写的：代码一改，它们自己就更新。
+    </div>
+    <div class="callout">
+      <b>旁路 · 第三方 API</b><br>
+      后端可以去调用外部 API（Open Library、Stripe、OpenAI…）。
+      必须<b>由后端调用</b>，绝不能从前端调，否则密钥会暴露。
+    </div>
+  </div>
+
+  <!-- ============ 02 ============ -->
+  <h2><span class="num">02</span>一次请求的旅程：13 站</h2>
+  <p class="lead">真实场景：用户新建一本书。注意<b>每一跳数据的「形态」都在变</b> —— 这正是很少有人讲清楚的地方。</p>
+
+  <ol class="steps">
+    <li class="front"><span class="t">用户在表单里输入</span><span class="who">浏览器</span>
+      <div class="note">此刻数据住在 DOM 里：<code>&lt;input value="El Quijote"&gt;</code></div></li>
+
+    <li class="front"><span class="t">JavaScript 把它收进一个对象</span><span class="who">app.js</span>
+      <code>{ title: "El Quijote", author: "Cervantes", page: 863, stock: 2 }</code></li>
+
+    <li class="front"><span class="t">变成一段 JSON 文本</span><span class="who">api.js</span>
+      <code>'{"title":"El Quijote","author":"Cervantes","page":863,"stock":2}'</code>
+      <div class="note">形态是<b>字符串</b>。网络只能传文本，传不了对象。</div></li>
+
+    <li class="net"><span class="t">浏览器发出请求</span><span class="who">HTTP</span>
+      <code>POST /books/ HTTP/1.1
+Content-Type: application/json
+Origin: http://127.0.0.1:5500
+
+{"title":"El Quijote","author":"Cervantes","page":863,"stock":2}</code></li>
+
+    <li class="net"><span class="t">在此之前，先有一次 CORS 预检</span><span class="who">浏览器</span>
+      <code>OPTIONS /books/  →  200 OK
+access-control-allow-origin: *</code>
+      <div class="note">浏览器先问一句「我可以发吗」，才发真正的请求。这行代码<b>不是你写的</b>。</div></li>
+
+    <li class="back"><span class="t">uvicorn 收到文本并转换</span><span class="who">main.py</span>
+      <code>dict: {"title":"El Quijote","author":"Cervantes","page":863,"stock":2}</code>
+      <div class="note">从 HTTP 文本变成 Python 对象。</div></li>
+
+    <li class="back"><span class="t">找到正确的路由</span><span class="who">routes/</span>
+      <code>POST + /books/  →  create_new_book()</code></li>
+
+    <li class="back"><span class="t">Pydantic 校验内容</span><span class="who">schema/</span>
+      <code>BookCreate(title="El Quijote", author="Cervantes", page=863, stock=2)</code>
+      <div class="note">如果 <code>page &lt;= 0</code> → 直接返回 <b>422</b>，后面什么都不执行。</div></li>
+
+    <li class="back"><span class="t">业务逻辑构造出「表对象」</span><span class="who">controller/</span>
+      <code>Book(title="El Quijote", author="Cervantes", page=863, stock=2)</code>
+      <div class="note">ORM 对象：一条「未来的行」，此刻还没有 <code>id</code>。</div></li>
+
+    <li class="db"><span class="t">ORM 生成 SQL 并写入</span><span class="who">models/ + database/</span>
+      <code>INSERT INTO books (title, author, page, stock) VALUES (...)</code></li>
+
+    <li class="db"><span class="t">数据库把 id 交回来</span><span class="who">db.sqlite3</span>
+      <code>id = 1     ← 由数据库生成，不是客户端发的</code></li>
+
+    <li class="back"><span class="t">序列化成 JSON 并响应</span><span class="who">response_model</span>
+      <code>HTTP/1.1 201 Created
+{"title":"El Quijote","author":"Cervantes","page":863,"stock":2,"id":1}</code>
+      <div class="note"><b>201</b> = 资源创建成功。</div></li>
+
+    <li class="front"><span class="t">浏览器把结果显示出来</span><span class="who">app.js</span>
+      <code>res.json()  →  JS 对象  →  模板字符串  →  innerHTML  →  屏幕上的像素</code>
+      <div class="note">闭环完成：这本书立刻出现在列表里，页面没有刷新（R3）。</div></li>
+  </ol>
+
+  <!-- ============ 03 ============ -->
+  <h2><span class="num">03</span>那么……「API」到底是什么？</h2>
+  <p class="lead">它不是第四个组件。它是后端的<b>外门</b>：前端唯一能看见的那一部分。</p>
+
+  <div class="nest">
+    <div class="n1">
+      <h4>后端 —— 完整的程序（:8000 上的 Python 进程）</h4>
+      <p>在服务器上运行的一切，都算后端。</p>
+
+      <div class="n2">
+        <h4>API —— 门面与契约</h4>
+        <p><code>routes/</code>（有哪些路径和方法）+ <code>schema/</code>（接受和返回什么样的 JSON）。
+           这就是前端所知道的<b>全部</b>。</p>
+
+        <div class="n3">
+          <h4>实现 —— 如何兑现这份契约</h4>
+          <p><code>controller/</code>（逻辑）+ <code>models/</code>（表）+ <code>database/</code>（连接）。
+             前端永远看不到这一部分。</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <table style="margin-top:18px">
+    <tr><th>如果你改了这里…</th><th>前端要跟着改吗？</th><th>为什么</th></tr>
+    <tr><td><code>controller</code> 内部的逻辑</td><td>不用</td><td>契约没变，返回的东西还是一样</td></tr>
+    <tr><td>把 SQLite 换成 PostgreSQL</td><td>不用</td><td>只改 <code>DATABASE_URL</code>，ORM 抹平了差异</td></tr>
+    <tr><td>把 FastAPI 换成 Django</td><td>不用（只要路由和 JSON 保持不变）</td><td>API 是契约，不是框架</td></tr>
+    <tr><td>在 <code>schema</code> 里增加一个字段</td><td><b>要</b></td><td>契约变了，界面上得把它显示出来</td></tr>
+    <tr><td>把 <code>page</code> 改名成 <code>pages</code></td><td><b>要</b></td><td>前端还在发 <code>page</code> → 直接 422</td></tr>
+  </table>
+
+  <!-- ============ 04 ============ -->
+  <h2><span class="num">04</span>文件地图：谁负责什么</h2>
+
+  <table>
+    <tr><th>层</th><th>文件</th><th>唯一职责</th></tr>
+    <tr><td rowspan="4">前端<br><small>:5500</small></td><td><code>app.html</code></td><td>结构：列表、表单、详情面板</td></tr>
+    <tr><td><code>style.css</code></td><td>外观与响应式布局（Mobile First）</td></tr>
+    <tr><td><code>api.js</code></td><td>所有 <code>fetch()</code> 调用集中在一处</td></tr>
+    <tr><td><code>app.js</code></td><td>事件处理、DOM 渲染、加载状态</td></tr>
+
+    <tr><td rowspan="6">后端<br><small>:8000</small></td><td><code>main.py</code></td><td>创建应用、CORS、挂载路由、健康检查</td></tr>
+    <tr><td><code>routes/routes.py</code></td><td><b>API</b>：路径、方法、状态码</td></tr>
+    <tr><td><code>schema/book_schema.py</code></td><td><b>契约</b>：输入校验与输出形状</td></tr>
+    <tr><td><code>controller/book_controller.py</code></td><td>逻辑：查询、创建、更新、删除、错误处理</td></tr>
+    <tr><td><code>models/book_model.py</code></td><td><code>books</code> 表的结构</td></tr>
+    <tr><td><code>database/database.py</code></td><td>引擎、会话和 <code>get_db</code> 依赖</td></tr>
+
+    <tr><td>数据</td><td><code>db.sqlite3</code></td><td>真正的持久化：服务器重启也不丢</td></tr>
+    <tr><td>文档</td><td><code>/docs</code>、<code>/openapi.json</code></td><td>自动生成，从不手写</td></tr>
+  </table>
+
+  <!-- ============ 05 ============ -->
+  <h2><span class="num">05</span>三句话总结全部</h2>
+
+  <div class="grid">
+    <div class="callout"><b>1. 没有人跨层。</b><br>
+      前端不和 SQLite 说话，后端不画 HTML。每一跳用不同格式：浏览器与服务器之间是 <b>JSON</b>，服务器与数据库之间是 <b>SQL</b>。</div>
+    <div class="callout"><b>2. API 是契约。</b><br>
+      只要 API 不变，你可以单独重写前端或后端。一旦 API 变了，两边都必须同步改。</div>
+    <div class="callout"><b>3. 报错会告诉你哪一层坏了。</b><br>
+      <code>ERR_CONNECTION_REFUSED</code> → 没有服务器。<code>404</code> → 路径写错。<code>422</code> → JSON 不合法。<code>500</code> → 后端出错。<code>CORS</code> → 网络边界。</div>
+    <div class="callout"><b>以及一个实用推论</b><br>
+      如果屏幕上没显示出来，<b>先去看 <code>/docs</code></b>。那里能成功 → 问题在前端；那里也失败 → 问题在后端。</div>
+  </div>
+
+</div>
+</body>
+</html>

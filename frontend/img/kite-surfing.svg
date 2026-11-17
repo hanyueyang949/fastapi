@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360" role="img" aria-label="Practicante de kite surfing">
+  <defs>
+    <linearGradient id="cieloKite" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#67e8f9"/>
+      <stop offset=".45" stop-color="#0e7490"/>
+      <stop offset="1" stop-color="#0c4a6e"/>
+    </linearGradient>
+    <linearGradient id="cometa" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#fb7185"/>
+      <stop offset="1" stop-color="#e11d48"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="640" height="360" fill="url(#cieloKite)"/>
+
+  <!-- Sol -->
+  <circle cx="110" cy="76" r="34" fill="#fef9c3" opacity=".55"/>
+
+  <!-- Cometa -->
+  <path d="M430 52 C520 34 590 96 572 168 C520 190 442 150 430 52 Z" fill="url(#cometa)"/>
+  <path d="M430 52 C520 34 590 96 572 168 C520 190 442 150 430 52 Z" fill="none" stroke="#fff1f2" stroke-width="3" opacity=".6"/>
+  <path d="M452 62 C520 92 540 126 552 158" fill="none" stroke="#fff1f2" stroke-width="2.5" opacity=".5"/>
+
+  <!-- Líneas -->
+  <path d="M450 130 L250 268 M566 150 L250 268" stroke="#e0f2fe" stroke-width="2" opacity=".8"/>
+
+  <!-- Mar -->
+  <path d="M0 268 C120 246 220 288 340 272 C460 256 560 288 640 268 L640 360 L0 360 Z" fill="#083344" opacity=".9"/>
+  <g stroke="#a5f3fc" stroke-width="3" fill="none" opacity=".45">
+    <path d="M40 306 q22 -10 44 0 q22 10 44 0"/>
+    <path d="M420 320 q22 -10 44 0 q22 10 44 0"/>
+    <path d="M250 340 q22 -10 44 0 q22 10 44 0"/>
+  </g>
+
+  <!-- Tabla y surfista -->
+  <g transform="rotate(-6 250 280)">
+    <ellipse cx="250" cy="286" rx="76" ry="11" fill="#f8fafc"/>
+    <ellipse cx="250" cy="286" rx="76" ry="11" fill="none" stroke="#0f172a" stroke-width="2" opacity=".25"/>
+  </g>
+  <g fill="#0f172a">
+    <circle cx="250" cy="228" r="10"/>
+    <path d="M241 240 q9 -5 18 0 l3 30 -7 3 -5 -18 -5 18 -8 -3 Z"/>
+    <path d="M240 248 L218 236 M260 248 L282 258" stroke="#0f172a" stroke-width="5" stroke-linecap="round"/>
+  </g>
+
+  <!-- Espuma -->
+  <g fill="#e0f2fe" opacity=".7">
+    <circle cx="312" cy="292" r="6"/>
+    <circle cx="326" cy="300" r="4"/>
+    <circle cx="196" cy="296" r="5"/>
+  </g>
+</svg>

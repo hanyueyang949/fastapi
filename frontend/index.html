@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>letdosport · Catálogo de deportes</title>
+<link rel="stylesheet" href="css/style.css?v=10">
+</head>
+<body>
+
+<!-- ============================================================
+     CABECERA
+     ============================================================ -->
+<header class="site-header">
+  <div class="wrap header-inner">
+    <a class="brand" href="index.html">
+      <span class="brand-mark">L</span>
+      <span class="brand-text">letdosport</span>
+    </a>
+
+    <nav class="header-nav">
+      <a href="usuario.html">Usuario</a>
+      <a class="cart-link" href="carrito.html">
+        Carrito
+        <!-- 数量角标：由 js/cart.js 更新 -->
+        <span class="cart-count" data-contador-carrito hidden>0</span>
+      </a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <!-- ============================================================
+       ENCABEZADO DE PÁGINA + ACCIÓN PRINCIPAL
+       ============================================================ -->
+  <div class="page-head">
+    <div>
+      <h1>Catálogo de deportes</h1>
+      <p class="page-sub">
+        Experiencias y material para moverte: consulta cada deporte, añádelo al
+        carrito y compra en dos clics.
+      </p>
+    </div>
+    <button class="btn btn-primary" id="btn-nuevo" type="button">+ Nuevo deporte</button>
+  </div>
+
+  <!-- ============================================================
+       PANEL DE FORMULARIO (crear / editar)
+       Oculto por defecto. Lo muestra app.js con abrirFormulario().
+       ============================================================ -->
+  <section id="panel-formulario" class="panel" hidden>
+
+    <div class="panel-head">
+      <div>
+        <h2 id="form-titulo">Nuevo deporte</h2>
+        <p class="panel-sub" id="form-subtitulo">Rellena los datos del deporte o actividad.</p>
+      </div>
+    </div>
+
+    <form id="form-deporte" novalidate>
+      <!-- id oculto: vacío = crear / con valor = editar -->
+      <input type="hidden" id="deporte-id" value="">
+
+      <div class="form-grid">
+        <div class="field field-full">
+          <label for="campo-nombre">Nombre <span class="req">*</span></label>
+          <input id="campo-nombre" name="nombre" type="text" maxlength="80"
+                 autocomplete="off" placeholder="Ej. Tenis">
+        </div>
+
+        <div class="field field-full">
+          <label for="campo-descripcion">Descripción <span class="req">*</span></label>
+          <textarea id="campo-descripcion" name="descripcion" rows="4" maxlength="600"
+                    placeholder="Qué incluye, para quién es, qué se necesita…"></textarea>
+        </div>
+
+        <div class="field">
+          <label for="campo-precio">Precio (€) <span class="req">*</span></label>
+          <input id="campo-precio" name="precio" type="number" min="0.01" step="0.01"
+                 placeholder="89.90">
+        </div>
+
+        <div class="field">
+          <label for="campo-stock">Stock <span class="req">*</span></label>
+          <input id="campo-stock" name="stock" type="number" min="0" step="1"
+                 placeholder="12">
+        </div>
+
+        <div class="field field-full">
+          <label for="campo-imagen">Imagen</label>
+          <input id="campo-imagen" name="imagen" type="text" maxlength="200"
+                 autocomplete="off" placeholder="img/tenis.svg">
+          <p class="form-hint">
+            Ruta dentro de <code>frontend/</code>. Si lo dejas vacío se usa
+            <code>img/default.svg</code>.
+          </p>
+        </div>
+      </div>
+
+      <!-- Aquí se muestran los errores del servidor (422, 500…) -->
+      <p id="form-error" class="form-error" hidden></p>
+
+      <div class="form-actions">
+        <button class="btn btn-primary" id="btn-guardar" type="submit">Guardar</button>
+        <button class="btn btn-ghost" id="btn-cancelar" type="button">Cancelar</button>
+      </div>
+    </form>
+
+  </section>
+
+  <!-- ============================================================
+       PANEL DE DETALLE (ficha del deporte)
+       Se muestra al pulsar «Ver detalle». Oculta el listado.
+       ============================================================ -->
+  <section id="panel-detalle" class="panel" hidden>
+
+    <div class="detalle-grid-2">
+
+      <!-- Imagen grande -->
+      <div class="detalle-media">
+        <img id="detalle-imagen" src="img/default.svg" alt="">
+      </div>
+
+      <!-- Datos -->
+      <div class="detalle-info">
+        <p class="detalle-eyebrow">Ficha del deporte</p>
+        <h2 id="detalle-nombre">—</h2>
+
+        <div class="detalle-meta">
+          <span class="price price-lg" id="detalle-precio">—</span>
+          <span class="detalle-stock" id="detalle-stock">—</span>
+          <span class="card-id" id="detalle-id">—</span>
+        </div>
+
+        <p class="detalle-texto" id="detalle-descripcion">—</p>
+
+        <div class="form-actions">
+          <button class="btn btn-primary" id="btn-detalle-anadir" type="button">Añadir al carrito</button>
+          <button class="btn btn-ghost" id="btn-detalle-editar" type="button">Editar</button>
+          <button class="btn btn-danger" id="btn-detalle-eliminar" type="button">Eliminar</button>
+        </div>
+      </div>
+    </div>
+
+    <button class="btn btn-ghost btn-sm detalle-volver" id="btn-volver" type="button">← Volver al catálogo</button>
+
+  </section>
+
+  <!-- ============================================================
+       ESTADOS DEL LISTADO (los controla app.js)
+       Solo uno puede estar visible a la vez.
+       ============================================================ -->
+
+  <!-- Estado 1: cargando (esqueletos grises) -->
+  <div id="estado-cargando" class="state" hidden>
+    <div class="grid">
+      <div class="card skeleton" aria-hidden="true"><span class="sk-line sk-title"></span><span class="sk-line"></span><span class="sk-line sk-short"></span></div>
+      <div class="card skeleton" aria-hidden="true"><span class="sk-line sk-title"></span><span class="sk-line"></span><span class="sk-line sk-short"></span></div>
+      <div class="card skeleton" aria-hidden="true"><span class="sk-line sk-title"></span><span class="sk-line"></span><span class="sk-line sk-short"></span></div>
+    </div>
+    <p class="state-hint">Cargando deportes…</p>
+  </div>
+
+  <!-- Estado 2: sin datos -->
+  <div id="estado-vacio" class="state state-box" hidden>
+    <p class="state-title">Todavía no hay deportes en el catálogo</p>
+    <p class="state-text">Pulsa «Nuevo deporte» para añadir el primero.</p>
+  </div>
+
+  <!-- Estado 3: error de conexión -->
+  <div id="estado-error" class="state state-box state-error" hidden>
+    <p class="state-title">No se pudo conectar con el servidor</p>
+    <p class="state-text" id="error-texto">Comprueba que el backend esté en marcha en el puerto 8000.</p>
+    <button class="btn btn-ghost" id="btn-reintentar" type="button">Reintentar</button>
+  </div>
+
+  <!-- ============================================================
+       CATÁLOGO
+       El contenido lo genera app.js a partir de los datos que
+       devuelve la API (ver tarjetaHTML() en js/app.js).
+       ============================================================ -->
+  <section id="lista" class="grid" aria-live="polite"></section>
+
+</main>
+
+<!-- ============================================================
+     CONTENEDOR DE NOTIFICACIONES (toast)
+     ============================================================ -->
+<div id="toasts" class="toast-wrap" aria-live="polite" aria-atomic="false"></div>
+
+<!-- ============================================================
+     SCRIPTS  (el orden importa)
+     api.js   → capa de red de nuestra API
+     cart.js  → carrito en localStorage
+     ui.js    → toast + escapar() + formatearPrecio()
+     app.js   → lógica de la interfaz (usa los tres anteriores)
+     ============================================================ -->
+<script src="js/api.js"></script>
+<script src="js/cart.js"></script>
+<script src="js/ui.js"></script>
+<script src="js/app.js"></script>
+
+</body>
+</html>

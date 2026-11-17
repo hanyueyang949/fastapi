@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360" role="img" aria-label="Paracaidista en el cielo">
+  <defs>
+    <linearGradient id="cieloSky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#0ea5e9"/>
+      <stop offset=".6" stop-color="#2563eb"/>
+      <stop offset="1" stop-color="#1e3a8a"/>
+    </linearGradient>
+    <linearGradient id="vela" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#fdba74"/>
+      <stop offset="1" stop-color="#ea580c"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="640" height="360" fill="url(#cieloSky)"/>
+
+  <!-- Sol -->
+  <circle cx="520" cy="70" r="46" fill="#fef3c7" opacity=".35"/>
+  <circle cx="520" cy="70" r="26" fill="#fef9c3" opacity=".8"/>
+
+  <!-- Nubes -->
+  <g fill="#e0f2fe" opacity=".5">
+    <ellipse cx="120" cy="300" rx="80" ry="18"/>
+    <ellipse cx="180" cy="286" rx="52" ry="14"/>
+    <ellipse cx="540" cy="316" rx="90" ry="16"/>
+  </g>
+
+  <!-- Cúpula del paracaídas -->
+  <path d="M320 64 C226 64 158 122 140 182 L500 182 C482 122 414 64 320 64 Z" fill="url(#vela)"/>
+  <path d="M320 64 C226 64 158 122 140 182 L500 182 C482 122 414 64 320 64 Z" fill="none" stroke="#fff7ed" stroke-width="3" opacity=".7"/>
+  <g stroke="#fff7ed" stroke-width="2.5" opacity=".65" fill="none">
+    <path d="M320 64 L320 182"/>
+    <path d="M234 74 C206 106 190 142 184 182"/>
+    <path d="M406 74 C434 106 450 142 456 182"/>
+  </g>
+
+  <!-- Cuerdas -->
+  <path d="M160 182 L300 250 M480 182 L340 250" stroke="#f8fafc" stroke-width="2" opacity=".75"/>
+
+  <!-- Paracaidista -->
+  <g fill="#0f172a">
+    <circle cx="320" cy="256" r="9"/>
+    <path d="M311 268 q9 -6 18 0 l4 26 -8 4 -5 -16 -5 16 -8 -4 Z"/>
+    <path d="M312 274 L296 292 M328 274 L344 290" stroke="#0f172a" stroke-width="5" stroke-linecap="round"/>
+  </g>
+
+  <!-- Pájaros -->
+  <g stroke="#e0f2fe" stroke-width="2.5" fill="none" opacity=".7">
+    <path d="M92 96 q12 -10 24 0 q12 -10 24 0"/>
+    <path d="M180 60 q9 -8 18 0 q9 -8 18 0"/>
+  </g>
+</svg>
